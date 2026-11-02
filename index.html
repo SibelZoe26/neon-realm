@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#090611">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Neon Realm</title>
+<style>
+:root {
+  --accent: #c084fc;
+  --second: #67e8f9;
+  --bg: #090611;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: #eee7ff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.sky {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 85% 15%, #632a652f, transparent 50%),
+    radial-gradient(ellipse at 10% 65%, #164c642b, transparent 50%);
+}
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #e8d9ff;
+  animation: shimmer 5s infinite alternate;
+}
+@keyframes shimmer {
+  from { opacity: .15; transform: translateY(0); }
+  to { opacity: .85; transform: translateY(-12px); }
+}
+main {
+  position: relative;
+  max-width: 480px;
+  margin: auto;
+  padding: max(32px, env(safe-area-inset-top)) 24px
+    max(30px, env(safe-area-inset-bottom));
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand {
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+.badge {
+  font-size: 10px;
+  color: var(--second);
+  border: 1px solid #ffffff18;
+  border-radius: 20px;
+  padding: 7px 10px;
+}
+.hero { text-align: center; padding: 40px 0 28px; }
+.portal {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 26px;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 45px #b45aff25, inset 0 0 35px #b45aff18;
+}
+.portal::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px dashed var(--second);
+  border-radius: 50%;
+  opacity: .5;
+  animation: orbit 90s linear infinite;
+}
+@keyframes orbit { to { transform: rotate(360deg); } }
+.rune {
+  font-family: Georgia, serif;
+  font-size: 68px;
+  color: var(--accent);
+  text-shadow: 0 0 25px var(--accent);
+}
+.eyebrow {
+  color: var(--accent);
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+#clock {
+  font-size: clamp(64px, 19vw, 88px);
+  font-weight: 200;
+  letter-spacing: -4px;
+  font-variant-numeric: tabular-nums;
+  margin: 6px 0;
+  text-shadow: 0 0 35px #c084fc30;
+}
+#date { color: #a99abb; font-size: 14px; }
+.card {
+  background: linear-gradient(135deg, #ffffff08, #ffffff02);
+  border: 1px solid #ffffff12;
+  border-radius: 20px;
+  padding: 22px;
+  margin-top: 14px;
+  backdrop-filter: blur(12px);
+}
+.label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--second);
+  text-transform: uppercase;
+}
+.timer-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+#timer {
+  font-size: 38px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.primary {
+  background: var(--accent);
+  color: #170d23;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-weight: 600;
+}
+.secondary {
+  background: transparent;
+  border: 1px solid #ffffff25;
+  color: #c6b7db;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.hint { font-size: 12px; line-height: 1.6; color: #9587a7; }
+.quote {
+  font-family: Georgia, serif;
+  font-size: 21px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+  color: #d7c5eb;
+}
+.themes { display: flex; gap: 12px; margin-top: 16px; }
+.swatch {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: var(--color);
+}
+.swatch[aria-pressed="true"] {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+footer {
+  text-align: center;
+  margin-top: 30px;
+  color: #766783;
+  font-size: 10px;
+  letter-spacing: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="sky" id="sky" aria-hidden="true"></div>
+<main>
+  <header>
+    <span class="brand">NEON REALM</span>
+    <span class="badge">✧ JOUW HEILIGDOM</span>
+  </header>
+
+  <section class="hero" aria-label="Klok">
+    <div class="portal" aria-hidden="true"><span class="rune">☽</span></div>
+    <div class="eyebrow" id="greeting">De nacht ontwaakt</div>
+    <div id="clock">00:00</div>
+    <div id="date"></div>
+  </section>
+
+  <section class="card" aria-label="Focus-timer">
+    <div class="label">✦ Focusritueel</div>
+    <div class="timer-row">
+      <span id="timer" role="timer">25:00</span>
+      <button class="primary" id="start">Start focus</button>
+    </div>
+    <p class="hint" id="status">25 minuten ruimte voor één ding.</p>
+    <button class="secondary" id="reset">Opnieuw</button>
+  </section>
+
+  <section class="card">
+    <div class="label">☾ Fluistering van het rijk</div>
+    <p class="quote">Zelfs in de diepste duisternis draag jij je eigen licht.</p>
+  </section>
+
+  <section class="card">
+    <div class="label">✧ Kies je aura</div>
+    <div class="themes" role="group" aria-label="Kleurthema">
+      <button class="swatch" style="--color:#c084fc"
+        data-theme="violet" aria-label="Paars" aria-pressed="true"></button>
+      <button class="swatch" style="--color:#67e8f9"
+        data-theme="ice" aria-label="IJsblauw" aria-pressed="false"></button>
+      <button class="swatch" style="--color:#fb7185"
+        data-theme="crimson" aria-label="Karmozijn" aria-pressed="false"></button>
+    </div>
+    <p class="hint">Een ander licht, hetzelfde rijk.</p>
+  </section>
+
+  <footer>BETWEEN MAGIC & MACHINE</footer>
+</main>
+
+<script>
+const el = id => document.getElementById(id);
+
+for (let i = 0; i < 65; i++) {
+  const star = document.createElement("span");
+  star.className = "star";
+  star.style.left = Math.random() * 100 + "%";
+  star.style.top = Math.random() * 100 + "%";
+  star.style.animationDelay = -Math.random() * 5 + "s";
+  el("sky").appendChild(star);
+}
+
+function updateClock() {
+  const now = new Date();
+  el("clock").textContent = now.toLocaleTimeString("nl-BE", {
+    hour: "2-digit", minute: "2-digit"
+  });
+  el("date").textContent = now.toLocaleDateString("nl-BE", {
+    weekday: "long", day: "numeric", month: "long"
+  });
+  const hour = now.getHours();
+  el("greeting").textContent =
+    hour < 6 ? "De nacht waakt over je" :
+    hour < 12 ? "Een nieuw rijk ontwaakt" :
+    hour < 18 ? "Volg je eigen magie" : "De nacht ontwaakt";
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+let remaining = 25 * 60;
+let deadline = null;
+let running = false;
+
+function showTimer() {
+  if (running) {
+    remaining = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    if (remaining === 0) {
+      running = false;
+      el("status").textContent = "Ritueel voltooid. Tijd voor een pauze. ✧";
+      el("start").textContent = "Nog een keer";
+    }
+  }
+  const minutes = String(Math.floor(remaining / 60)).padStart(2, "0");
+  const seconds = String(remaining % 60).padStart(2, "0");
+  el("timer").textContent = `${minutes}:${seconds}`;
+}
+
+el("start").addEventListener("click", () => {
+  if (running) {
+    showTimer();
+    running = false;
+    el("start").textContent = remaining === 0 ? "Nog een keer" : "Verder";
+    if (remaining > 0) el("status").textContent = "Je ritueel is gepauzeerd.";
+  } else {
+    if (remaining === 0) remaining = 25 * 60;
+    deadline = Date.now() + remaining * 1000;
+    running = true;
+    el("start").textContent = "Pauze";
+    el("status").textContent = "Jouw moment. Eén ding tegelijk.";
+  }
+  showTimer();
+});
+
+el("reset").addEventListener("click", () => {
+  running = false;
+  remaining = 25 * 60;
+  deadline = null;
+  el("start").textContent = "Start focus";
+  el("status").textContent = "25 minuten ruimte voor één ding.";
+  showTimer();
+});
+
+setInterval(showTimer, 250);
+document.addEventListener("visibilitychange", showTimer);
+
+const themes = {
+  violet: ["#c084fc", "#67e8f9"],
+  ice: ["#67e8f9", "#c084fc"],
+  crimson: ["#fb7185", "#fbbf24"]
+};
+
+function setTheme(name) {
+  if (!themes[name]) return;
+  document.documentElement.style.setProperty("--accent", themes[name][0]);
+  document.documentElement.style.setProperty("--second", themes[name][1]);
+  document.querySelectorAll(".swatch").forEach(button => {
+    button.setAttribute("aria-pressed", String(button.dataset.theme === name));
+  });
+  try { localStorage.setItem("neon-theme", name); } catch {}
+}
+
+document.querySelectorAll(".swatch").forEach(button => {
+  button.addEventListener("click", () => setTheme(button.dataset.theme));
+});
+try { setTheme(localStorage.getItem("neon-theme") || "violet"); } catch {}
+</script>
+</body>
+</html>
